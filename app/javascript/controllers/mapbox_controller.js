@@ -22,6 +22,51 @@ export default class extends Controller {
     circuit7aSource: String,
   }
 
+connect() {
+  mapboxgl.accessToken = this.tokenValue;
+
+  this.map = new mapboxgl.Map({
+    container: 'map',
+    language: this.localeValue, // doesn't seem to work?
+    locale: this.localeValue == 'fr' ? this.getFrLocale() : null,
+    hash: true,
+    //style: `mapbox://styles/nmondollot/cl95n147u003k15qry7pvfmq2${this.draftValue ? "/draft" : ""}`,   
+    style: `mapbox://styles/ewanbuckingham/cmfwwrcne00dy01siefnmfctf${this.draftValue ? "/draft" : ""}`,  
+    bounds: [[2.7300000, 48.3900000], [2.76900000, 48.4700000]], 
+    padding: 5,
+  });
+
+  this.addControls();
+
+  this.map.on('load', () => {
+    this.addLayers();
+    this.centerMap();
+    this.cleanHistory();
+  });
+
+
+  this.popup = null;
+  this.map.on('moveend', () => {
+    if (this.popup != null) {
+      this.popup.addTo(this.map);
+      this.popup = null;
+    }
+  });
+
+  this.setupClickEvents();
+
+  // FIXME: make this DRY (see Problem::GRADE_VALUES)
+  this.allGrades = [
+    "1a","1a+","1b","1b+","1c","1c+","2a","2a+","2b","2b+","2c","2c+",
+    "3a","3a+","3b","3b+","3c","3c+","4a","4a+","4b","4b+","4c","4c+",
+    "5a","5a+","5b","5b+","5c","5c+","6a","6a+","6b","6b+","6c","6c+",
+    "7a","7a+","7b","7b+","7c","7c+","8a","8a+","8b","8b+","8c","8c+",
+    "9a","9a+","9b","9b+","9c","9c+",
+  ];
+}
+
+
+  /*
   connect() {
     mapboxgl.accessToken = this.tokenValue;
 
@@ -31,7 +76,9 @@ export default class extends Controller {
       locale: this.localeValue == 'fr' ? this.getFrLocale() : null,
       hash: true,
       style: `mapbox://styles/nmondollot/cl95n147u003k15qry7pvfmq2${this.draftValue ? "/draft" : ""}`,
-      bounds: [[2.4806787, 48.2868427],[2.7698927,48.473906]], 
+      //style: `mapbox://styles/ewanbuckingham/cmfwwrcne00dy01siefnmfctf${this.draftValue ? "/draft" : ""}`,
+      //bounds: [[2.4806787, 48.2868427],[2.7698927,48.473906]], 
+      bounds: [[2.7300000, 48.3900000],[2.76900000,48.4700000]], 
       padding: 5,
     });
 
@@ -56,7 +103,7 @@ export default class extends Controller {
     // FIXME: make this DRY (see Problem::GRADE_VALUES)
     this.allGrades = ["1a","1a+","1b","1b+","1c","1c+","2a","2a+","2b","2b+","2c","2c+","3a","3a+","3b","3b+","3c","3c+","4a","4a+","4b","4b+","4c","4c+","5a","5a+","5b","5b+","5c","5c+","6a","6a+","6b","6b+","6c","6c+","7a","7a+","7b","7b+","7c","7c+","8a","8a+","8b","8b+","8c","8c+","9a","9a+","9b","9b+","9c","9c+",]
   }
-
+*/
   addControls() {
     this.map.addControl(
       new mapboxgl.ScaleControl({
@@ -83,7 +130,8 @@ export default class extends Controller {
   addLayers() {
     this.map.addSource('problems', {
       type: 'vector',
-      url: 'mapbox://nmondollot.4xsv235p',
+      //url: 'mapbox://nmondollot.4xsv235p',
+      url: 'mapbox://ewanbuckingham.8kq8ca2w',
       promoteId: "id"
     });
 
@@ -91,7 +139,7 @@ export default class extends Controller {
       'id': 'problems',
       'type': 'circle',
       'source': 'problems',
-      'source-layer': 'problems-ayes3a',
+      'source-layer': 'problems-310l1u',
       'minzoom': 15,
       'layout': {
         'visibility': 'visible',
@@ -228,21 +276,21 @@ export default class extends Controller {
       ],
     }
     ,
-    "areas" // layer will be inserted just before this layer
+    //"areas" // layer will be inserted just before this layer
     );
 
     this.map.addLayer({
       'id': 'problems-texts',
       'type': 'symbol',
       'source': 'problems',
-      'source-layer': 'problems-ayes3a',
+      'source-layer': 'problems-310l1u',
       'minzoom': 19,
       'layout': {
         'visibility': 'visible',
         'text-allow-overlap': true,
         'text-field': [
           "to-string",
-          ["get", "circuitNumber"]
+          ["get", "circuit_number"]
         ],
         'text-size': [
           "interpolate",

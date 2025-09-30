@@ -2,7 +2,7 @@ class MapController < ApplicationController
   layout "map"
 
   def index
-    if params[:slug] && (area = Area.find_by(slug: params[:slug]))
+      if params[:slug] && (area = Area.find_by(slug: params[:slug]))
       @area = area # FIXME: don't forget to refactor _map_nav when changing this
       @bounds = {
         south_west_lat: area.bounds[:south_west].lat,
@@ -11,7 +11,7 @@ class MapController < ApplicationController
         north_east_lon: area.bounds[:north_east].lon
       }.
       with_indifferent_access.deep_transform_keys { |key| key.camelize(:lower) }
-    end
+      end
 
     if params[:pid] && (problem = Problem.find(params[:pid]))
       location = if params[:contribute]
