@@ -290,7 +290,7 @@ connect() {
         'text-allow-overlap': true,
         'text-field': [
           "to-string",
-          ["get", "circuit_number"]
+          ["get", "circuitNumber"]
         ],
         'text-size': [
           "interpolate",
