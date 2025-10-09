@@ -18,6 +18,7 @@ test:
   <<: *default
   database: boolder-test
 
+<<<<<<< HEAD
 # Attempt to connect to database via DATABASE_URL env var, if present on Heroku
 default: &default
   adapter: postgresql
@@ -63,3 +64,33 @@ production:
   #   username: boolder
   #   password: <%= ENV["POSTGRES_PASSWORD"] %>
   #   host: <%= ENV["DB_HOST"] %>
+=======
+production:
+  primary:
+    <<: *default
+    database: boolder-production
+    username: boolder
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    host: <%= ENV["DB_HOST"] %>
+  cache:
+    <<: *default
+    database: boolder-cache
+    migrations_paths: db/cache_migrate
+    username: boolder
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    host: <%= ENV["DB_HOST"] %>
+  queue:
+    <<: *default
+    database: boolder-queue
+    migrations_paths: db/queue_migrate
+    username: boolder
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    host: <%= ENV["DB_HOST"] %>
+  cable:
+    <<: *default
+    database: boolder-cable
+    migrations_paths: db/cable_migrate
+    username: boolder
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    host: <%= ENV["DB_HOST"] %>
+>>>>>>> 9563094f (Restored database.yml)
