@@ -19,7 +19,6 @@ test:
   database: boolder-test
 
 production:
-production:
   adapter: postgis
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
