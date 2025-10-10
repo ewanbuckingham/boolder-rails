@@ -3,13 +3,12 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.3.5"
 
-gem "activerecord-postgis-adapter", require: "active_record/connection_adapters/postgis_adapter"
+gem "activerecord-postgis-adapter", github: "boolder-org/activerecord-postgis-adapter", branch: "rails-8" # waiting for official Rails 8 support
 gem "rgeo"
 gem "rails", "~> 8.0"
 gem "puma", ">= 5.0"
 gem "pg"
 gem "pg_search"
-# gem "activerecord-postgis-adapter" # , github: "boolder-org/activerecord-postgis-adapter", branch: "rails-8" # waiting for official Rails 8 support
 gem "aws-sdk-s3"
 gem "image_processing", "~> 1.2"
 gem "propshaft"
