@@ -2,7 +2,10 @@ require "active_support/core_ext/integer/time"
 require "active_support/core_ext/numeric/bytes"
 
 Rails.application.configure do
-  # Settings specified here will take precedence over those in config/application.rb.
+   # Settings specified here will take precedence over those in config/application.rb.
+
+   # Force Rails to use a single database while we're using Heroku in production.
+   config.active_record.database_selector = nil
 
   # Code is not reloaded between requests.
   config.enable_reloading = false
