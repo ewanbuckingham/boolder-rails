@@ -19,6 +19,7 @@ test:
   database: boolder-test
 
 production:
+  primary:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
 
