@@ -8,6 +8,9 @@ Bundler.require(*Rails.groups)
 
 module Boolder
   class Application < Rails::Application
+    # Force Rails to use only the default production database
+    config.active_record.database_roles = {}
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
