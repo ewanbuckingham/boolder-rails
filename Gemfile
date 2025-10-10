@@ -3,6 +3,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.3.5"
 
+gem "activerecord-postgis-adapter", require: "active_record/connection_adapters/postgis_adapter"
+gem "rgeo"
 gem "rails", "~> 8.0"
 gem "puma", ">= 5.0"
 gem "pg"
@@ -34,7 +36,7 @@ gem "colorize"
 gem "audited"
 gem "ostruct" # TODO: remove
 gem "rgeo-geojson", "~> 2.1.1" # TODO: update
-gem "rgeo"
+# gem "rgeo"
 gem "differ"
 gem "breadcrumbs_on_rails"
 gem "meta-tags"
