@@ -20,8 +20,8 @@ test:
 
 production:
   primary:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
 
   queue:
     <<: *default
