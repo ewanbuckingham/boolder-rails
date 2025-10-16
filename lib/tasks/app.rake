@@ -252,18 +252,42 @@ namespace :app do
   end
 
   task covers: :environment do
-    Area.order(:id).all.each do |area|
-      puts "processing area ##{area.id}"
+  Area.order(:id).all.each do |area|
+    puts "processing area ##{area.id}"
 
-      output_file = Rails.root.join("export", "app", "area-covers", "area-cover-#{area.id}.jpg").to_s
+    next unless area.cover.attached? # Skip if there's no cover
+
+    output_file = Rails.root.join("export", "app", "area-covers", "area-cover-#{area.id}.jpg").to_s
+
+    begin
       area.cover.open do |file|
-        im = Vips::Image.new_from_file file.path.to_s
-        im.thumbnail_image(400).write_to_file output_file
+        im = Vips::Image.new_from_file(file.path.to_s)
+        im.thumbnail_image(400).write_to_file(output_file)
       end
+      puts "Saved cover for area ##{area.id}"
+    rescue => e
+      puts "Failed to process cover for area ##{area.id}: #{e.message}"
     end
-
-    puts "exported covers".green
   end
+
+  puts "exported covers".green
+end
+
+
+
+  # task covers: :environment do
+  #   Area.order(:id).all.each do |area|
+  #     puts "processing area ##{area.id}"
+
+  #     output_file = Rails.root.join("export", "app", "area-covers", "area-cover-#{area.id}.jpg").to_s
+  #     area.cover.open do |file|
+  #       im = Vips::Image.new_from_file file.path.to_s
+  #       im.thumbnail_image(400).write_to_file output_file
+  #     end
+  #   end
+
+  #   puts "exported covers".green
+  # end
 end
 
 def normalize(string)
