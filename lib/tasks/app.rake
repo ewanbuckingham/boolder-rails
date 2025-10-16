@@ -241,8 +241,15 @@ namespace :app do
       else
         # FIXME: iterate on topos (not lines) to avoid double processing
         line.topo.photo.open do |file|
-          im = Vips::Image.new_from_file file.path.to_s
-          im.thumbnail_image(800).write_to_file output_file
+          # im = Vips::Image.new_from_file file.path.to_s
+          # im.thumbnail_image(800).write_to_file output_file
+          #
+          # Sets image resolution to 800 x 600 only
+          line.topo.photo.open do |file|
+            im = Vips::Image.new_from_file(file.path.to_s)
+            im = im.thumbnail_image(800, height: 600, crop: :centre)
+            im.write_to_file(output_file)
+          end
         end
 
         puts "created topo-#{line.topo.id}.jpg"
