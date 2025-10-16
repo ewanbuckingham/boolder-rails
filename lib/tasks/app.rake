@@ -1,4 +1,4 @@
-# require 'vips'
+require "vips"
 
 namespace :app do
   task db: :environment do
@@ -165,35 +165,35 @@ namespace :app do
         CREATE INDEX poi_idx ON pois(id);
       SQL
 
-      Poi.all.each do |p|
-        db.execute(
-          "INSERT INTO pois (id, poi_type, name, short_name, google_url, latitude, longitude)
-          VALUES (?, ?, ?, ?, ?, ?, ?)",
-          [ p.id, p.poi_type, p.name, p.short_name, p.google_url, p.location&.lat, p.location&.lon ]
-        )
-      end
+      # Poi.all.each do |p|
+      #   db.execute(
+      #     "INSERT INTO pois (id, poi_type, name, short_name, google_url, latitude, longitude)
+      #     VALUES (?, ?, ?, ?, ?, ?, ?)",
+      #     [ p.id, p.poi_type, p.name, p.short_name, p.google_url, p.location&.lat, p.location&.lon ]
+      #   )
+      # end
 
 
-      db.execute <<-SQL
-        create table poi_routes (
-          id INTEGER NOT NULL PRIMARY KEY,
-          area_id INTEGER NOT NULL,
-          poi_id INTEGER NOT NULL,
-          distance_in_minutes INTEGER NOT NULL,
-          transport TEXT NOT NULL
-        );
-        CREATE INDEX poi_route_idx ON poi_routes(id);
-        CREATE INDEX poi_route_area_idx ON poi_routes(area_id);
-        CREATE INDEX poi_route_poi_idx ON poi_routes(poi_id);
-      SQL
+      # db.execute <<-SQL
+      #   create table poi_routes (
+      #     id INTEGER NOT NULL PRIMARY KEY,
+      #     area_id INTEGER NOT NULL,
+      #     poi_id INTEGER NOT NULL,
+      #     distance_in_minutes INTEGER NOT NULL,
+      #     transport TEXT NOT NULL
+      #   );
+      #   CREATE INDEX poi_route_idx ON poi_routes(id);
+      #   CREATE INDEX poi_route_area_idx ON poi_routes(area_id);
+      #   CREATE INDEX poi_route_poi_idx ON poi_routes(poi_id);
+      # SQL
 
-      PoiRoute.all.each do |pr|
-        db.execute(
-          "INSERT INTO poi_routes (id, area_id, poi_id, distance_in_minutes, transport)
-          VALUES (?, ?, ?, ?, ?)",
-          [ pr.id, pr.area_id, pr.poi_id, pr.distance_in_minutes, pr.transport ]
-        )
-      end
+      # PoiRoute.all.each do |pr|
+      #   db.execute(
+      #     "INSERT INTO poi_routes (id, area_id, poi_id, distance_in_minutes, transport)
+      #     VALUES (?, ?, ?, ?, ?)",
+      #     [ pr.id, pr.area_id, pr.poi_id, pr.distance_in_minutes, pr.transport ]
+      #   )
+      # end
 
 
       db.execute <<-SQL
@@ -233,7 +233,7 @@ namespace :app do
     puts "exporting area #{area_id}"
 
     Line.published.joins(:problem).where(problems: { area_id: area_id }).each do |line|
-      puts "processing photo for line ##{line.id}"
+      puts "processing phrailoto for line ##{line.id}"
       output_file = Rails.root.join("export", "app", "topos", "area-#{area_id}", "topo-#{line.topo.id}.jpg").to_s
 
       if File.exist?(output_file)
@@ -251,19 +251,19 @@ namespace :app do
     puts "exported topos for area ##{area_id}".green
   end
 
-  # task covers: :environment do
-  #   Area.order(:id).all.each do |area|
-  #     puts "processing area ##{area.id}"
+  task covers: :environment do
+    Area.order(:id).all.each do |area|
+      puts "processing area ##{area.id}"
 
-  #     output_file = Rails.root.join('export', 'app', "area-covers", "area-cover-#{area.id}.jpg").to_s
-  #     area.cover.open do |file|
-  #       im = Vips::Image.new_from_file file.path.to_s
-  #       im.thumbnail_image(400).write_to_file output_file
-  #     end
-  #   end
+      output_file = Rails.root.join("export", "app", "area-covers", "area-cover-#{area.id}.jpg").to_s
+      area.cover.open do |file|
+        im = Vips::Image.new_from_file file.path.to_s
+        im.thumbnail_image(400).write_to_file output_file
+      end
+    end
 
-  #   puts "exported covers".green
-  # end
+    puts "exported covers".green
+  end
 end
 
 def normalize(string)
