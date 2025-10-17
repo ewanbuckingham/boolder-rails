@@ -99,55 +99,134 @@ namespace :mapbox do
     puts "exported clusters.geojson".green
   end
 
-  task problems: :environment do
-    puts "exporting problems"
+# # Problems only
+# rake mapbox:problems EXPORT_MODE=problems
 
-    raise "please specify a value for include_boulders (true or false). Reminder: don't include boulders when exporting to boolder-data" unless ENV["include_boulders"].present?
-    include_boulders = ENV["include_boulders"] == "true"
+# # Problems + Boulders
+# rake mapbox:problems EXPORT_MODE=problems_and_boulders
 
-    factory = RGeo::GeoJSON::EntityFactory.instance
+# # Boulders only
+# rake mapbox:problems EXPORT_MODE=boulders
+task problems: :environment do
+  puts "exporting problems"
 
-    problem_features = Problem.with_location.joins(:area).where(area: { published: true }).map do |problem|
-      hash = {}.with_indifferent_access
-      hash.merge!(problem.slice(:grade, :steepness, :featured, :popularity))
-      hash[:id] = problem.id
-      hash[:circuit_color] = problem.circuit&.color
-      hash[:circuit_id] = problem.circuit_id_simplified
-      hash[:circuit_number] = problem.circuit_number_simplified
+  export_mode = ENV["EXPORT_MODE"]
+  valid_modes = %w[problems problems_and_boulders boulders]
 
-      name_fr = I18n.with_locale(:fr) { problem.name_with_fallback }
-      name_en = I18n.with_locale(:en) { problem.name_with_fallback }
-      hash[:name] = name_fr
-      hash[:name_en] = (name_en != name_fr) ? name_en : ""
-
-      hash.deep_transform_keys! { |key| key.camelize(:lower) }
-
-      factory.feature(problem.location, nil, hash)
-    end
-
-    # Extract boulders alongside problems to ensure we always upload both at the same time to mapbox
-    boulder_features = Boulder.where.not(area_id: [ 45, 75, 79, 104, 113 ]).joins(:area).where(area: { published: true }).map do |boulder|
-      factory.feature(boulder.polygon, nil, {})
-    end
-
-    if include_boulders
-      features = problem_features + boulder_features
-    else
-      features = problem_features
-    end
-
-    feature_collection = factory.feature_collection(
-      features
-    )
-
-    geo_json = RGeo::GeoJSON.encode(feature_collection)
-
-    File.open(Rails.root.join("..", "boolder-maps", "mapbox", "problems#{"-without-boulders" if !include_boulders}.geojson"), "w") do |f|
-      f.write(JSON.pretty_generate(geo_json))
-    end
-
-    puts "exported problems.geojson".green
+  unless valid_modes.include?(export_mode)
+    raise "Please specify EXPORT_MODE as one of: #{valid_modes.join(', ')}"
   end
+
+  factory = RGeo::GeoJSON::EntityFactory.instance
+
+  problem_features = []
+  boulder_features = []
+
+  if %w[problems problems_and_boulders].include?(export_mode)
+    problem_features = Problem.with_location
+      .joins(:area)
+      .where(area: { published: true })
+      .map do |problem|
+        hash = {}.with_indifferent_access
+        hash.merge!(problem.slice(:grade, :steepness, :featured, :popularity))
+        hash[:id] = problem.id
+        hash[:circuit_color] = problem.circuit&.color
+        hash[:circuit_id] = problem.circuit_id_simplified
+        hash[:circuit_number] = problem.circuit_number_simplified
+
+        name_fr = I18n.with_locale(:fr) { problem.name_with_fallback }
+        name_en = I18n.with_locale(:en) { problem.name_with_fallback }
+        hash[:name] = name_fr
+        hash[:name_en] = (name_en != name_fr) ? name_en : ""
+
+        hash.deep_transform_keys! { |key| key.camelize(:lower) }
+
+        factory.feature(problem.location, nil, hash)
+      end
+  end
+
+  if %w[boulders problems_and_boulders].include?(export_mode)
+    boulder_features = Boulder.where.not(area_id: [ 45, 75, 79, 104, 113 ])
+      .joins(:area)
+      .where(area: { published: true })
+      .map { |boulder| factory.feature(boulder.polygon, nil, {}) }
+  end
+
+  # Combine based on mode
+  features = case export_mode
+  when "problems" then problem_features
+  when "boulders" then boulder_features
+  when "problems_and_boulders" then problem_features + boulder_features
+  end
+
+  feature_collection = factory.feature_collection(features)
+  geo_json = RGeo::GeoJSON.encode(feature_collection)
+
+  output_filename =
+    case export_mode
+    when "problems" then "problems-without-boulders.geojson"
+    when "boulders" then "boulders.geojson"
+    else "problems-with-boulders.geojson"
+    end
+
+  output_path = Rails.root.join("..", "boolder-maps", "mapbox", output_filename)
+  File.open(output_path, "w") do |f|
+    f.write(JSON.pretty_generate(geo_json))
+  end
+
+  puts "exported #{output_filename}".green
+end
+
+
+  # task problems: :environment do
+  #   puts "exporting problems"
+
+  #   raise "please specify a value for include_boulders (true or false). Reminder: don't include boulders when exporting to boolder-data" unless ENV["include_boulders"].present?
+  #   include_boulders = ENV["include_boulders"] == "true"
+
+  #   factory = RGeo::GeoJSON::EntityFactory.instance
+
+  #   problem_features = Problem.with_location.joins(:area).where(area: { published: true }).map do |problem|
+  #     hash = {}.with_indifferent_access
+  #     hash.merge!(problem.slice(:grade, :steepness, :featured, :popularity))
+  #     hash[:id] = problem.id
+  #     hash[:circuit_color] = problem.circuit&.color
+  #     hash[:circuit_id] = problem.circuit_id_simplified
+  #     hash[:circuit_number] = problem.circuit_number_simplified
+
+  #     name_fr = I18n.with_locale(:fr) { problem.name_with_fallback }
+  #     name_en = I18n.with_locale(:en) { problem.name_with_fallback }
+  #     hash[:name] = name_fr
+  #     hash[:name_en] = (name_en != name_fr) ? name_en : ""
+
+  #     hash.deep_transform_keys! { |key| key.camelize(:lower) }
+
+  #     factory.feature(problem.location, nil, hash)
+  #   end
+
+  #   # Extract boulders alongside problems to ensure we always upload both at the same time to mapbox
+  #   boulder_features = Boulder.where.not(area_id: [ 45, 75, 79, 104, 113 ]).joins(:area).where(area: { published: true }).map do |boulder|
+  #     factory.feature(boulder.polygon, nil, {})
+  #   end
+
+  #   if include_boulders
+  #     features = problem_features + boulder_features
+  #   else
+  #     features = problem_features
+  #   end
+
+  #   feature_collection = factory.feature_collection(
+  #     features
+  #   )
+
+  #   geo_json = RGeo::GeoJSON.encode(feature_collection)
+
+  #   File.open(Rails.root.join("..", "boolder-maps", "mapbox", "problems#{"-without-boulders" if !include_boulders}.geojson"), "w") do |f|
+  #     f.write(JSON.pretty_generate(geo_json))
+  #   end
+
+  #   puts "exported problems.geojson".green
+  # end
 
   task circuits: :environment do
     factory = RGeo::GeoJSON::EntityFactory.instance
