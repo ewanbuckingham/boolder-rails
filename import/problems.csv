@@ -1,16 +1,46 @@
 ﻿id,name,grade,circuit_id,circuit_number,steepness,area_id
-25921,Oedipus Traverse,6b,,,other,93
-25922,Mint 400 Start,7b+,,,other,93
-25923,Oedipus Direct,6b+,,,other,93
-25924,Neon Dust Direct,7a,,,other,93
-25925,Pnnacle Traverse,7a+,,,other,93
-25926,Direct Start to Downhill Racer,7a+,,,other,93
-25927,The Arête,6b,,,other,93
-25928,Joe's Original ,6a,,,other,93
-25929,Joe's Slab Traverse,7a,,,other,93
-25930,,5a,,,other,93
-25931,,6b+,,,other,93
-25932,Slingshot,8a,,,other,93
-25933,Chequer's Groove,7c+,,,other,93
-25934,Sole Power,7c+,,,other,93
-25935,Jankers Groove Sit Start,6c,,,other,93
+0,Removed,6a,,,other,94
+25936,Perfect Day Sit Start,7b,,,other,94
+25937,Pogle's Wood,6c,,,other,94
+25938,Pogle's Wood Left-hand,6b,,,other,94
+25939,Pogle's Wood Sit Start,7b,,,other,94
+25940,Bin Laden's Cave,7a+,,,other,94
+25941,A Tasty Graunch,7a+,,,other,94
+25942,,6c,,,other,94
+25943,,6b+,,,other,94
+25944,Mark's Roof Left-hand,7a+,,,other,94
+25945,Mark's Roof,7b,,,other,94
+25946,Mark's Roof Direct,7c,,,other,94
+25947,,6a,,,other,94
+25948,,5a,,,other,94
+25949,,6a+,,,other,94
+25950,,5a,,,other,94
+25951,,5b,,,other,94
+25952,,6b+,,,other,94
+25953,,7b,,,other,94
+25954,,6c,,,other,94
+25955,Soft on the G,7a+,,,other,94
+25956,Full Power,8a,,,other,94
+25957,8 Ball,8b,,,other,94
+25958,Rock Hard Bishop,6b+,,,other,94
+25959,,6c,,,other,94
+25960,,7a,,,other,94
+25961,,7c,,,other,94
+25962,,6b,,,other,94
+25963,,6a,,,other,94
+25964,G-Thang,6b+,,,other,94
+25965,G-Thang Sit start,6c+,,,other,94
+25966,Barry Sheene,7c,,,other,94
+25967,China in Your Hands,7b+,,,other,94
+25968,,6a+,,,other,94
+25969,,5a,,,other,94
+25970,,5a+,,,other,94
+25971,Suavito,7b+,,,other,94
+25972,,6c,,,other,94
+25973,,6c,,,other,94
+25974,,5a+,,,other,94
+25975,,6a,,,other,94
+25976,Superbloc,8a,,,other,94
+25977,The Jackalope,7a,,,other,94
+25978,Stump Hole Cavern,7c+,,,other,94
+25979,Stump Hole Cavern - first bit,7b+,,,other,94
